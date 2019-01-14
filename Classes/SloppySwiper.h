@@ -32,6 +32,9 @@
 /// Gesture recognizer used to recognize swiping to the right.
 @property (weak, readonly, nonatomic, nullable) UIPanGestureRecognizer *panRecognizer;
 
+/// Gesture recognizer used to recognize edge screen swiping to the right.
+@property (weak, readonly, nonatomic, nullable) UIScreenEdgePanGestureRecognizer *edgePanRecognizer;
+
 @property (nonatomic, weak) id<SloppySwiperDelegate> delegate;
 
 /// Designated initializer if the class isn't used from the Interface Builder.
