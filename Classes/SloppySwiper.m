@@ -23,11 +23,14 @@
 
 - (void)dealloc
 {
-    [_panRecognizer removeTarget:self action:@selector(pan:)];
-    [_navigationController.view removeGestureRecognizer:_panRecognizer];
+    [self.panRecognizer removeTarget:self action:@selector(pan:)];
+    [self.navigationController.view removeGestureRecognizer:self.panRecognizer];
+
+    [self.edgePanRecognizer removeTarget:self action:@selector(pan:)];
+    [self.navigationController.view removeGestureRecognizer:self.edgePanRecognizer];
 }
 
-- (instancetype)initWithNavigationController:(UINavigationController *)navigationController
+- (_Nonnull instancetype)initWithNavigationController:(UINavigationController * _Nonnull)navigationController
 {
     NSCParameterAssert(!!navigationController);
 
@@ -48,15 +51,26 @@
 
 - (void)commonInit
 {
-    SSWDirectionalPanGestureRecognizer *panRecognizer = [[SSWDirectionalPanGestureRecognizer alloc] initWithTarget:self action:@selector(pan:)];
+    SSWDirectionalPanGestureRecognizer *panRecognizer = [[SSWDirectionalPanGestureRecognizer alloc]
+                                                         initWithTarget:self action:@selector(pan:)];
     panRecognizer.direction = SSWPanDirectionRight;
     panRecognizer.maximumNumberOfTouches = 1;
     panRecognizer.delegate = self;
     [_navigationController.view addGestureRecognizer:panRecognizer];
     _panRecognizer = panRecognizer;
 
-    _animator = [[SSWAnimator alloc] init];
-    _animator.delegate = self;
+    UIScreenEdgePanGestureRecognizer *edgePanRecognizer = [[UIScreenEdgePanGestureRecognizer alloc]
+                                                           initWithTarget:self action:@selector(pan:)];
+    edgePanRecognizer.edges = UIRectEdgeLeft;
+    edgePanRecognizer.maximumNumberOfTouches = 1;
+    edgePanRecognizer.delegate = self;
+    [_navigationController.view addGestureRecognizer:edgePanRecognizer];
+    _edgePanRecognizer = edgePanRecognizer;
+
+    [_panRecognizer requireGestureRecognizerToFail:_edgePanRecognizer];
+
+    self.animator = [[SSWAnimator alloc] init];
+    self.animator.delegate = self;
 }
 
 #pragma mark - SSWAnimatorDelegate
@@ -143,9 +157,11 @@
     
     if (navigationController.viewControllers.count <= 1) {
         self.panRecognizer.enabled = NO;
+        self.edgePanRecognizer.enabled = NO;
     }
     else {
         self.panRecognizer.enabled = YES;
+        self.edgePanRecognizer.enabled = YES;
     }
 }
 
