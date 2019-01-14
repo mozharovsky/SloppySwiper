@@ -96,6 +96,10 @@
 - (void)pan:(UIPanGestureRecognizer*)recognizer
 {
     UIView *view = self.navigationController.view;
+    CGPoint translation = [recognizer translationInView:view];
+    // Cumulative translation.x can be less than zero because user can pan slightly to the right and then back to the left.
+    CGFloat d = translation.x > 0 ? translation.x / CGRectGetWidth(view.bounds) : 0;
+
     if (recognizer.state == UIGestureRecognizerStateBegan) {
         if (self.navigationController.viewControllers.count > 1 && !self.duringAnimation) {
             self.interactionController = [[UIPercentDrivenInteractiveTransition alloc] init];
@@ -104,12 +108,10 @@
             [self.navigationController popViewControllerAnimated:YES];
         }
     } else if (recognizer.state == UIGestureRecognizerStateChanged) {
-        CGPoint translation = [recognizer translationInView:view];
-        // Cumulative translation.x can be less than zero because user can pan slightly to the right and then back to the left.
-        CGFloat d = translation.x > 0 ? translation.x / CGRectGetWidth(view.bounds) : 0;
         [self.interactionController updateInteractiveTransition:d];
     } else if (recognizer.state == UIGestureRecognizerStateEnded || recognizer.state == UIGestureRecognizerStateCancelled) {
-        if ([recognizer velocityInView:view].x > 0) {
+        CGFloat velocity = [recognizer velocityInView:view].x;
+        if ((velocity >= 500) || (d >= 0.2f && velocity >= 0)) {
             [self.interactionController finishInteractiveTransition];
         } else {
             [self.interactionController cancelInteractiveTransition];
