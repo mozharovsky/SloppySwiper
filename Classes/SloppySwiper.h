@@ -30,11 +30,11 @@
 @interface SloppySwiper : NSObject <UINavigationControllerDelegate>
 
 /// Gesture recognizer used to recognize swiping to the right.
-@property (weak, readonly, nonatomic) UIPanGestureRecognizer *panRecognizer;
+@property (weak, readonly, nonatomic, nullable) UIPanGestureRecognizer *panRecognizer;
 
 @property (nonatomic, weak) id<SloppySwiperDelegate> delegate;
 
 /// Designated initializer if the class isn't used from the Interface Builder.
-- (instancetype)initWithNavigationController:(UINavigationController *)navigationController;
+- (_Nonnull instancetype)initWithNavigationController:(UINavigationController * _Nonnull)navigationController;
 
 @end
