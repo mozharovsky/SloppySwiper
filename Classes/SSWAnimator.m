@@ -40,7 +40,7 @@ UIViewAnimationOptions const SSWNavigationTransitionCurve = 7 << 16;
 - (NSTimeInterval)transitionDuration:(id <UIViewControllerContextTransitioning>)transitionContext
 {
     // Approximated lengths of the default animations.
-    return [transitionContext isInteractive] ? 0.25f : 0.5f;
+    return 0.25f;
 }
 
 // Tries to animate a pop transition similarly to the default iOS' pop transition.
